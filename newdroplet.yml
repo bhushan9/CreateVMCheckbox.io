@@ -12,7 +12,6 @@
 
 - hosts: newdroplets
   user: jenkins 
-  gather_facts: no
   vars_files:
     - vars.yml
   tasks:
