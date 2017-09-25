@@ -6,7 +6,7 @@
 - name: Deploy public key
   digital_ocean: >
     state=present
-    command=ssh
+    command=droplet
     name=checkboxkey
     api_token="{{ api_key }}"
     ssh_pub_key= "{{my_pub_key}}"
