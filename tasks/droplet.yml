@@ -13,7 +13,7 @@
   register: do_droplet
 - name: debug
   debug:
-    msg: "{{do_droplet.stdout}}"
+    msg: "{{do_droplet.json}}"
      
 - name: Create Digital Ocean droplet 512Mb/Ubuntu16.04 LTS/Amsterdam
   digital_ocean: >   
