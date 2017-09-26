@@ -18,6 +18,7 @@
   with_items:
     - git
     - nginx
+    - npm
     - mongodb
     - nodejs-legacy
     - python3-pip
@@ -51,7 +52,7 @@
 
 - name: configure nginx defaults
   copy:
-    src: /home/ubuntu/checkbox/local-conf/default
+    src: /root/checkbox/local-conf/default
     dest: /etc/nginx/sites-available/default
     force: yes
     remote_src: True
@@ -59,7 +60,7 @@
 
 - name: configure nginx conf
   copy:
-    src: /home/ubuntu/checkbox/local-conf/nginx.conf
+    src: /root/checkbox/local-conf/nginx.conf
     dest: /etc/nginx/nginx.conf
     force: yes
     remote_src: True
@@ -73,7 +74,7 @@
 
 - name: npm install
   npm:
-    path: /home/ubuntu/checkbox/server-side/site/
+    path: /root/checkbox/server-side/site/
     state: present
 
 - name: start node server
@@ -86,4 +87,4 @@
   async: 2592000
   poll: 0
   args:
-    chdir: /home/ubuntu/checkbox/server-side/site/
+    chdir: /root/checkbox/server-side/site/
