@@ -11,7 +11,7 @@
 
 
 - hosts: newdroplets
-  gather_facts: no
+  become: yes
   user: root      
   vars_files:
     - vars.yml
