@@ -1,50 +1,36 @@
-
-- name: Install pip
-  become: yes
-  apt: 
-    name: python-pip
-    state: present
-
-- name: Install dopy
-  pip:
-    name: dopy
-
-- name: Install six
-  pip:
-    name: six
-    
-- name: Upgrade pip module dopy
-  become: yes
-  command: pip install dopy --upgrade
+- name: get key
+  shell: cat /var/lib/jenkins/.ssh/id_rsa.pub
+  register: key
   
-- name: Upgrade pip module six
-  become: yes
-  command: pip install six --upgrade
-
-- name: Getting private key
-  become: yes
-  command: cat /var/lib/jenkins/.ssh/id_rsa
-  register: private_key
-  
+- name: print key
+  debug:
+    msg: "{{key.stdout}}"
 - name: Deploy public key
   digital_ocean: >
     state=present
     command=ssh
-    name=my_ssh_key
+    name=my_new_key
     api_token="{{ api_key }}"
-    ssh_pub_key= "{{my_pub_key}}"
+    ssh_pub_key="{{ my_pub_key }}"
   register: do_droplet
+  
+- name: whoami
+  shell: whoami
+  register: out
+- name: debug
+  debug:
+    msg: "{{out.stdout}}"
      
-- name: Create Digital Ocean droplet 512Mb/Ubuntu16.04 LTS/Amsterdam
+- name: Create Digital Ocean droplet 512Mb/Ubuntu12.04 LTS/Amsterdam
   digital_ocean: >   
     state=present
     command=droplet
     name="{{ do_hostname }}"
     api_token="{{ api_key }}"
-    size_id=512mb
+    size_id=1gb
     ssh_key_ids="{{ do_droplet.ssh_key.id }}"
     region_id=nyc1
-    image_id=ubuntu-16-04-x64
+    image_id=ubuntu-14-04-x64
     wait_timeout=600
   register: do_droplet
 
@@ -55,9 +41,8 @@
   add_host: >
     name="{{ do_droplet.droplet.ip_address }}"
     groups=newdroplets
-    ansible_python_interpreter=/usr/bin/python3
-    
-    
+    ansible_ssh_user=root
+    ansible_ssh_private_key_file=/var/lib/jenkins/.ssh/id_rsa
 - name: Wait for VM to come up
   local_action: wait_for host="{{ do_droplet.droplet.ip_address }}" state=started
   async: no    
@@ -68,14 +53,7 @@
     api_token="{{ api_key }}"
     name="{{ do_hostname }}"
     unique_name=yes
-    size_id=512mb
+    size_id=1gb
     region_id=nyc1
-    image_id=ubuntu-16-04-x64
-    
-- name: ping
-  shell: ping "{{ do_droplet.droplet.ip_address }}"
-  register: output
-  
-- name: debug ping
-  debug:
-    msg: "{{output.stdout}}"
+    image_id=ubuntu-14-04-x64
+          
