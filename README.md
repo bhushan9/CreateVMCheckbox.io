@@ -1,3 +1,5 @@
 # CreateVMCheckbox.io
-
-Digital Ocean Image
+Run ansible playbook using following command
+```
+ansible-playbook -i localhost newdroplet.yml
+```
